@@ -103,13 +103,16 @@ function checkExercise(){
   $('progressValue').textContent=Math.round(((exIndex+1)/exercises.length)*100)+'%';
 }
 function nextExercise(){
-  if(exIndex<exercises.length-1){exIndex++;renderExercise();}
-  else{
-    const pct=Math.round((score/exercises.length)*100);
-    $('exerciseFeedback').innerHTML='<b>🎉 Ronda terminada.</b><br>Obtuviste '+score+' de '+exercises.length+' ('+pct+'%).<br><br><b>Diagnóstico:</b> '+(pct>=90?'Dominio excelente.':pct>=70?'Buen desempeño; refuerza las reglas donde fallaste.':'Conviene repasar las reglas y practicar nuevamente.')+'<br><br>Pulsa “Siguiente” para generar una nueva ronda aleatoria.';
-    $('nextExercise').textContent='Nueva ronda aleatoria';
-    $('nextExercise').onclick=()=>{$('nextExercise').textContent='Siguiente';newExerciseRound()};
+  if(exIndex<exercises.length-1){exIndex++;renderExercise();return;}
+  if(roundAnswered===false)return;
+  const pct=Math.round((score/exercises.length)*100);
+  if($('nextExercise').textContent==='Nueva ronda aleatoria'){
+    $('nextExercise').textContent='Siguiente';
+    newExerciseRound();
+    return;
   }
+  $('exerciseFeedback').innerHTML='<b>🎉 Ronda terminada.</b><br>Obtuviste '+score+' de '+exercises.length+' ('+pct+'%).<br><br><b>Diagnóstico:</b> '+(pct>=90?'Dominio excelente.':pct>=70?'Buen desempeño; refuerza las reglas donde fallaste.':'Conviene repasar las reglas y practicar nuevamente.')+'<br><br>Pulsa “Nueva ronda aleatoria” para continuar.';
+  $('nextExercise').textContent='Nueva ronda aleatoria';
 }
 function getHistory(){try{return JSON.parse(localStorage.getItem('eduquestVisits')||'[]')}catch(_){return[]}}
 function recordLogin(){const name=$('userName').value.trim();if(!name){$('loginStatus').textContent='Escribe tu nombre para ingresar.';return false}const role=$('userRole').value,grade=$('userGrade').value.trim()||'No indicado',now=new Date(),entry={name,role,grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};const h=getHistory();h.unshift(entry);localStorage.setItem('eduquestVisits',JSON.stringify(h.slice(0,100)));sessionStorage.setItem('eduquestCurrent',JSON.stringify(entry));updateUser(entry);renderHistory();return true}
