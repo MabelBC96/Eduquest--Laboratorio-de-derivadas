@@ -77,19 +77,20 @@ function latexExpr(s){
   return out;
 }
 function formatMath(s){
-  return '\\\\('+latexExpr(s)+'\\\\)';
+  return '\\('+latexExpr(s)+'\\)';
 }
 function formatQuestion(s){
   let out=String(s);
-  out=out.replace(/f′\((x|\\d+)\)/g,m=>'\\\\('+latexExpr(m)+'\\\\)');
-  out=out.replace(/(f\(x\)=)([^.?!]+)/g,(m,p,e)=>latexExpr(p)+ '\\\\('+latexExpr(e.trim())+'\\\\)');
+  out=out.replace(/f′\((x|\\d+)\)/g,m=>'\\('+latexExpr(m)+'\\)');
+  out=out.replace(/(f\(x\)=)([^.?!]+)/g,(m,p,e)=>latexExpr(p)+ '\\\\('+latexExpr(e.trim())+'\\)');
   return out;
 }
 function typesetMath(){
   if(window.MathJax && MathJax.typesetPromise){
     MathJax.typesetPromise().catch(()=>{});
   }
-}\nlet exercises=[];
+}
+let exercises=[];
 let exIndex=0,score=0,attempts=0,selected=null,roundAnswered=false;
 function newExerciseRound(){
   exercises=Array.from({length:12},()=>generateRandomExercise());
@@ -118,9 +119,10 @@ function checkExercise(){
     score++;$('scoreValue').textContent=score;
     $('exerciseFeedback').innerHTML='<b>✅ ¡Correcto!</b><br>'+e.e.steps+'<br><br><b>Regla:</b> '+e.e.rule+'<br><b>Respuesta:</b> '+formatMath(e.e.correct);
   }else{
-    $('exerciseFeedback').innerHTML='<b>❌ No es correcto.</b><br><b>Respuesta correcta:</b> '+e.e.correct+'<br><b>Regla:</b> '+e.e.rule+'<br><b>Procedimiento:</b> '+e.e.steps;
+    $('exerciseFeedback').innerHTML='<b>❌ No es correcto.</b><br><b>Respuesta correcta:</b> '+formatMath(e.e.correct)+'<br><b>Regla:</b> '+e.e.rule+'<br><b>Procedimiento:</b> '+e.e.steps;
   }
   roundAnswered=true;
+  typesetMath();
   $('progressValue').textContent=Math.round(((exIndex+1)/exercises.length)*100)+'%';
 }
 function nextExercise(){
@@ -141,7 +143,24 @@ function recordLogin(){const name=$('userName').value.trim();if(!name){$('loginS
 function updateUser(e){if(!e)return;$('currentUser').textContent=`${e.name} · ${e.role}`;$('welcomeUser').textContent=`· ${e.name}`;$('dashboardName').textContent=e.name.split(' ')[0]}
 function renderHistory(){const h=getHistory(),box=$('loginHistory');$('totalVisits').textContent=h.length;$('lastVisit').textContent=h[0]?`${h[0].date} ${h[0].time}`:'—';const cur=JSON.parse(sessionStorage.getItem('eduquestCurrent')||'null');$('activeProfile').textContent=cur?cur.role:'—';box.innerHTML=h.length?h.map(x=>`<div class="history-item"><div><b>${esc(x.name)}</b><br><small>${esc(x.role)} · ${esc(x.grade)}</small></div><small>${x.date} · ${x.time}</small></div>`).join(''):'<p class="muted">Todavía no hay registros.</p>'}
 function setupWelcome(){const overlay=$('welcomeOverlay'),login=$('loginOverlay'),img=$('welcomeImage'),start=$('startLab');if(!overlay||!login||!start)return;if(img&&img.src)document.documentElement.style.setProperty('--welcome-bg',`url("${img.src.replace(/"/g,'\\"')}")`);const openLogin=()=>{overlay.classList.add('is-hidden');login.classList.add('open');login.setAttribute('aria-hidden','false');setTimeout(()=>$('userName')?.focus(),100)};start.addEventListener('click',openLogin);start.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')openLogin()})}
-function bind(){document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go);const opt=e.target.closest('[data-option]');if(opt){selected=Number(opt.dataset.option);qsa('.option').forEach(x=>x.classList.remove('selected'));opt.classList.add('selected')}});const loginBtn=$('loginBtn');if(loginBtn)loginBtn.addEventListener('click',()=>{if(recordLogin()){$('loginOverlay').classList.remove('open');$('loginOverlay').setAttribute('aria-hidden','true');go('inicio')}});$('contentMenu').addEventListener('change',e=>go(e.target.value));$('hamb').addEventListener('click',()=>$('sidebar').classList.toggle('open'));$('contrast').addEventListener('click',()=>document.body.classList.toggle('hiContrast'));$('graphBtn').addEventListener('click',graph);$('prodBtn').addEventListener('click',()=>rule('prodU','prodV','prodOut',false));$('quotBtn').addEventListener('click',()=>rule('quotU','quotV','quotOut',true));$('tanBtn').addEventListener('click',tangentModule);$('genLesson').addEventListener('click',generateLesson);$('saveLesson').addEventListener('click',saveLesson);$('copyLesson').addEventListener('click',copyLesson);$('exportLesson').addEventListener('click',exportLesson);$('importLesson').addEventListener('change',importLesson);$('checkExercise').addEventListener('click',checkExercise);$('nextExercise').addEventListener('click',nextExercise);$('clearHistory').addEventListener('click',()=>{if(confirm('¿Limpiar el historial de ingresos?')){localStorage.removeItem('eduquestVisits');renderHistory()}});$('pngBtn').addEventListener('click',()=>{if($('plot')?.data)Plotly.downloadImage($('plot'),{format:'png',filename:'eduquest-derivadas',width:1400,height:800});else showToast('Primero genera una gráfica.')});$('csvBtn').addEventListener('click',()=>{if(!lastData.length)return showToast('Primero genera una gráfica.');const rows=[['x','f1'],...lastData.map(r=>[r.x,r.f1??''])],url=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\\n')],{type:'text/csv'})),a=document.createElement('a');a.href=url;a.download='eduquest-valores.csv';a.click();URL.revokeObjectURL(url)});$('speakBtn').addEventListener('click',()=>{if(!('speechSynthesis'in window))return showToast('La síntesis de voz no está disponible.');const t=($('metrics').innerText+' '+$('roots').innerText).trim();if(!t)return showToast('Primero genera una gráfica.');speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))})}
+function bind(){
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-go]'); if(b)go(b.dataset.go);
+    const opt=e.target.closest('[data-option]');
+    if(opt){selected=Number(opt.dataset.option);qsa('.option').forEach(x=>x.classList.remove('selected'));opt.classList.add('selected');}
+  });
+  const on=(id,event,fn)=>{const el=$(id);if(el)el.addEventListener(event,fn);};
+  on('loginBtn','click',()=>{if(recordLogin()){const l=$('loginOverlay');if(l){l.classList.remove('open');l.setAttribute('aria-hidden','true');}go('inicio')}});
+  on('contentMenu','change',e=>go(e.target.value)); on('hamb','click',()=>$('sidebar')?.classList.toggle('open'));
+  on('contrast','click',()=>document.body.classList.toggle('hiContrast')); on('graphBtn','click',graph);
+  on('prodBtn','click',()=>rule('prodU','prodV','prodOut',false)); on('quotBtn','click',()=>rule('quotU','quotV','quotOut',true)); on('tanBtn','click',tangentModule);
+  on('genLesson','click',generateLesson); on('saveLesson','click',saveLesson); on('copyLesson','click',copyLesson); on('exportLesson','click',exportLesson); on('importLesson','change',importLesson);
+  on('checkExercise','click',checkExercise); on('nextExercise','click',nextExercise);
+  on('clearHistory','click',()=>{if(confirm('¿Limpiar el historial de ingresos?')){localStorage.removeItem('eduquestVisits');renderHistory()}});
+  on('pngBtn','click',()=>{if($('plot')?.data)Plotly.downloadImage($('plot'),{format:'png',filename:'eduquest-derivadas',width:1400,height:800});else showToast('Primero genera una gráfica.')});
+  on('csvBtn','click',()=>{if(!lastData.length)return showToast('Primero genera una gráfica.');const rows=[['x','f1'],...lastData.map(r=>[r.x,r.f1??''])],url=URL.createObjectURL(new Blob([rows.map(r=>r.join(',')).join('\\n')],{type:'text/csv'})),a=document.createElement('a');a.href=url;a.download='eduquest-valores.csv';a.click();URL.revokeObjectURL(url)});
+  on('speakBtn','click',()=>{if(!('speechSynthesis'in window))return showToast('La síntesis de voz no está disponible.');const t=(($('metrics')?.innerText||'')+' '+($('roots')?.innerText||'')).trim();if(!t)return showToast('Primero genera una gráfica.');speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))});
+}
 async function init(){setupWelcome();bind();newExerciseRound();renderExercise();renderHistory();const saved=localStorage.getItem('eduquestLesson');if(saved)try{const d=JSON.parse(saved);Object.entries({lessonTitle:'title',lessonLevel:'level',lessonTime:'time',lessonObj:'obj',lessonQ:'q',lessonE:'e'}).forEach(([id,k])=>$(id).value=d[k]||'');if(d.title&&d.obj&&d.q&&d.e)renderLesson(d)}catch(_){}const cur=JSON.parse(sessionStorage.getItem('eduquestCurrent')||'null');if(cur)updateUser(cur);for(let i=0;i<30&&typeof math==='undefined';i++)await wait(100);if(typeof math!=='undefined'&&typeof Plotly!=='undefined')graph()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
