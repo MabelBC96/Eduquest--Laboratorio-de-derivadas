@@ -174,7 +174,7 @@ function boot(){
  if(!welcome||!login||!start||!btn)return;
  const open=()=>{welcome.classList.add('is-hidden');welcome.style.pointerEvents='none';login.classList.add('open');login.setAttribute('aria-hidden','false');login.style.display='grid';setTimeout(()=>$('userName')?.focus(),120)};
  start.onclick=open;
- btn.onclick=()=>{
+ btn.addEventListener('click',()=>{
    const name=$('userName')?.value.trim(); if(!name){$('loginStatus').textContent='Escribe tu nombre para ingresar.';return;}
    const role=$('userRole')?.value||'Estudiante', grade=$('userGrade')?.value.trim()||'No indicado', now=new Date();
    const entry={name,role,grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};
