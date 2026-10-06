@@ -62,7 +62,30 @@ function generateRandomExercise(){
   ];
   return pick(templates)();
 }
-function formatMath(s){return String(s).replace(/\^([0-9]+)/g,'<sup>$1</sup>').replace(/−/g,'−').replace(/\be\^/g,'e<sup>');}\nlet exercises=[];
+function latexExpr(s){
+  return String(s)
+    .replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4')
+    .replace(/−/g,'-')
+    .replace(/f′/g,"f'")
+    .replace(/y′/g,"y'")
+    .replace(/e\^\(([^()]*)\)/g,'e^{$1}')
+    .replace(/([a-zA-Z0-9]+)\^([0-9]+)/g,'$1^{$2}')
+    .replace(/\\b(sin|cos|tan|ln)\\b/g,'\\\\$1');
+}
+function formatMath(s){
+  return '\\\\('+latexExpr(s)+'\\\\)';
+}
+function formatQuestion(s){
+  let out=String(s);
+  out=out.replace(/f′\((x|\\d+)\)/g,m=>'\\\\('+latexExpr(m)+'\\\\)');
+  out=out.replace(/(f\(x\)=)([^.?!]+)/g,(m,p,e)=>latexExpr(p)+ '\\\\('+latexExpr(e.trim())+'\\\\)');
+  return out;
+}
+function typesetMath(){
+  if(window.MathJax && MathJax.typesetPromise){
+    MathJax.typesetPromise().catch(()=>{});
+  }
+}\nlet exercises=[];
 let exIndex=0,score=0,attempts=0,selected=null,roundAnswered=false;
 function newExerciseRound(){
   exercises=Array.from({length:12},()=>generateRandomExercise());
@@ -73,13 +96,14 @@ function newExerciseRound(){
 }
 function renderExercise(){
   const e=exercises[exIndex];
-  $('exerciseQuestion').innerHTML=formatMath(e.q);
+  $('exerciseQuestion').innerHTML=formatQuestion(e.q);
   $('exerciseCounter').textContent='Ejercicio '+(exIndex+1)+' de '+exercises.length;
   $('exerciseLevel').textContent='NIVEL '+e.level;
   $('exerciseOptions').innerHTML=shuffle(e.o.map((x,i)=>({text:x,index:i}))).map(x=>'<button class="option" data-option="'+x.index+'">'+formatMath(x.text)+'</button>').join('');
   $('exerciseFeedback').innerHTML='Selecciona una opción y pulsa <b>Comprobar</b>.';
   selected=null;roundAnswered=false;
   $('progressValue').textContent=Math.round((exIndex/exercises.length)*100)+'%';
+  typesetMath();
 }
 function checkExercise(){
   if(roundAnswered)return showToast('Ya comprobaste este ejercicio. Pulsa “Siguiente”.');
@@ -106,6 +130,7 @@ function nextExercise(){
   }
   $('exerciseFeedback').innerHTML='<b>🎉 Ronda terminada.</b><br>Obtuviste '+score+' de '+exercises.length+' ('+pct+'%).<br><br><b>Diagnóstico:</b> '+(pct>=90?'Dominio excelente.':pct>=70?'Buen desempeño; refuerza las reglas donde fallaste.':'Conviene repasar las reglas y practicar nuevamente.')+'<br><br>Pulsa “Nueva ronda aleatoria” para continuar.';
   $('nextExercise').textContent='Nueva ronda aleatoria';
+  typesetMath();
 }
 function getHistory(){try{return JSON.parse(localStorage.getItem('eduquestVisits')||'[]')}catch(_){return[]}}
 function recordLogin(){const name=$('userName').value.trim();if(!name){$('loginStatus').textContent='Escribe tu nombre para ingresar.';return false}const role=$('userRole').value,grade=$('userGrade').value.trim()||'No indicado',now=new Date(),entry={name,role,grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};const h=getHistory();h.unshift(entry);localStorage.setItem('eduquestVisits',JSON.stringify(h.slice(0,100)));sessionStorage.setItem('eduquestCurrent',JSON.stringify(entry));updateUser(entry);renderHistory();return true}
