@@ -41,33 +41,26 @@ chain:{name:'Regla de la cadena',formula:'(f(g(x)))′ = f′(g(x))·g′(x)'}
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick=a=>a[rnd(0,a.length-1)];
 const shuffle=a=>a.map(v=>({v,r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v);
-const exerciseFrom=(q,correct,rule,steps,level=1)=>{
-  const distractors=shuffle([
-    correct,
-    pick(['0','1','x','2x','x²','−x','2','3x','x+1','sin(x)','cos(x)','−sin(x)','sec²(x)']),
-    pick(['x²+1','2x+1','x−1','3x²','4x','−2x','5x²','x³'])
-  ]).filter((v,i,a)=>a.indexOf(v)===i);
-  while(distractors.length<4){
-    const extra=pick(['0','1','x','2x','3x','−x','x²','4x²','6x','−sin(x)','cos(x)','2']);
-    if(!distractors.includes(extra))distractors.push(extra);
-  }
-  const opts=distractors.slice(0,4),a=opts.indexOf(correct);
-  return {q,o:opts,a,e:{rule,steps,correct},level};
+const exerciseFrom=(q,correct,options,rule,steps,level=2)=>{
+  const opts=shuffle([correct,...options.filter(x=>x!==correct)]).slice(0,4);
+  return {q:q,o:opts,a:opts.indexOf(correct),e:{rule:rule,steps:steps,correct:correct},level:level};
 };
 function generateRandomExercise(){
-  const n=rnd(2,6), c=rnd(2,7), k=rnd(1,9), m=rnd(2,5), p=rnd(2,6);
-  const type=rnd(0,11);
-  if(type===0)return exerciseFrom('Deriva f(x) = '+c+' (constante).','0',RULES.constant.name,'1. La función es una constante. 2. Las constantes no cambian con x. 3. Por tanto, f′(x)=0.',1);
-  if(type===1)return exerciseFrom('Deriva f(x) = x.','1',RULES.identity.name,'1. La función es la identidad. 2. La pendiente de y=x es 1. 3. Por tanto, f′(x)=1.',1);
-  if(type===2){const correct=n+'x^'+(n-1);return exerciseFrom('Deriva f(x) = x^'+n+'.',correct,RULES.power.name,'1. Aplica n·x^(n−1). 2. Sustituye n='+n+'. 3. Resultado: '+correct+'.',1)}
-  if(type===3){const correct=c+'*'+m+'x^'+(m-1);return exerciseFrom('Deriva f(x) = '+c+'x^'+m+'.',correct,RULES.multiple.name,'1. Conserva el múltiplo '+c+'. 2. Deriva x^'+m+' como '+m+'x^'+(m-1)+'. 3. Multiplica: '+c+'·'+m+'x^'+(m-1)+' = '+correct+'.',1)}
-  if(type===4){const correct=n+'x^'+(n-1)+' + '+c;return exerciseFrom('Deriva f(x) = x^'+n+' + '+c+'x.',correct,RULES.sum.name,'1. Deriva cada término. 2. (x^'+n+')′='+n+'x^'+(n-1)+'. 3. ('+c+'x)′='+c+'. 4. Suma los resultados.',2)}
-  if(type===5){const correct=m+'x^'+(m-1)+'(x^'+n+') + x^'+m+'('+n+'x^'+(n-1)+')';return exerciseFrom('Usa la regla del producto en f(x)=x^'+m+'·x^'+n+'.',correct,RULES.product.name,'1. u=x^'+m+', v=x^'+n+'. 2. u′='+m+'x^'+(m-1)+' y v′='+n+'x^'+(n-1)+'. 3. Aplica u′v+uv′. 4. Puedes simplificar después.',2)}
-  if(type===6){const correct='(2x·(x^'+m+' + '+k+') − (x²+1)·'+m+'x^'+(m-1)+')/(x^'+m+' + '+k+')²';return exerciseFrom('Deriva f(x)=(x²+1)/(x^'+m+' + '+k+').',correct,RULES.quotient.name,'1. u=x²+1, v=x^'+m+'+'+k+'. 2. u′=2x y v′='+m+'x^'+(m-1)+'. 3. Sustituye en (u′v−uv′)/v².',3)}
-  if(type===7){const correct='e^('+c+'x)·'+c;return exerciseFrom('Deriva f(x)=e^('+c+'x).',correct,RULES.exponential.name,'1. Identifica u='+c+'x. 2. (e^u)′=e^u·u′. 3. u′='+c+'. 4. Resultado: '+correct+'.',2)}
-  if(type===8){const correct=c+'/x';return exerciseFrom('Deriva f(x)=ln('+c+'x).',correct,RULES.logarithm.name,'1. Identifica u='+c+'x. 2. (ln u)′=u′/u. 3. u′='+c+'. 4. c/('+c+'x)=1/x. Para evitar confusión, la respuesta equivalente es '+correct+'.',2)}
-  if(type===9){const trig=pick(['sin','cos','tan']);const inner=c+'x';let correct,steps;if(trig==='sin'){correct='cos('+inner+')·'+c;steps='1. Exterior: sin(u) → cos(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica: cos('+inner+')·'+c+'.'}else if(trig==='cos'){correct='−sin('+inner+')·'+c;steps='1. Exterior: cos(u) → −sin(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica.'}else{correct='sec²('+inner+')·'+c;steps='1. Exterior: tan(u) → sec²(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica.'}return exerciseFrom('Deriva f(x)='+trig+'('+inner+').',correct,RULES.trig.name,steps,2)}
-  const correct=(n*c)+'x^'+(n-1);return exerciseFrom('Deriva f(x)=('+c+'x²+'+k+')^'+n+'.',correct,RULES.chain.name,'1. Función exterior: u^'+n+'. 2. Derivada exterior: '+n+'u^'+(n-1)+'. 3. Interior u='+c+'x²+'+k+' tiene derivada '+(2*c)+'x. 4. Multiplica: '+n+'·('+c+'x²+'+k+')^'+(n-1)+'·'+(2*c)+'x = '+correct+'.',3);
+  const templates=[
+    function(){const a=pick([2,3,4]),b=pick([2,3,5]),c=pick([1,2,4]),d=pick([3,5,7]);const correct=(a*b)+'x^'+(a+b-1)+' + '+(a*d)+'x^'+(a-1);return exerciseFrom('Calcula f′(x) si f(x)=('+a+'x^'+a+'+'+c+')(x^'+b+'+'+d+').',correct,[(a*b)+'x^'+(a+b-1)+'+'+(a*c)+'x^'+(a-1),(a+b)+'x^'+(a+b-1)+'+'+d+'x^'+(a-1),(a*b)+'x^'+(a+b-1)+'+'+(a*d)+'x^'+a],RULES.product.name,'Aplica (uv)′=u′v+uv′ y simplifica los términos semejantes. La expresión resultante es '+correct+'.',3);},
+    function(){const correct='(x²−4x−1)/(x−2)²';return exerciseFrom('Calcula f′(x) si f(x)=(x²+1)/(x−2).',correct,['(x²−4x+1)/(x−2)²','(2x−2)/(x−2)²','(x²−4x−1)/(x−2)'],RULES.quotient.name,'u=x²+1, v=x−2; u′=2x y v′=1. Sustituye en (u′v−uv′)/v² y simplifica.',3);},
+    function(){const correct='4(3x²−2x+1)³(6x−2)';return exerciseFrom('Calcula f′(x) si f(x)=(3x²−2x+1)⁴.',correct,['4(3x²−2x+1)³(3x−2)','(12x−8)(3x²−2x+1)⁴','4(3x²−2x+1)³(6x+2)'],RULES.chain.name,'Sea u=3x²−2x+1. Entonces (u⁴)′=4u³u′ y u′=6x−2.',3);},
+    function(){const correct='(4x−1)e^(2x²−x)';return exerciseFrom('Calcula f′(x) si f(x)=e^(2x²−x).',correct,['e^(2x²−x)','(4x−1)e^(2x²+x)','(2x²−x)e^(2x²−x)'],RULES.exponential.name,'Identifica u=2x²−x. Como (eᵘ)′=eᵘu′ y u′=4x−1, se obtiene la respuesta indicada.',3);},
+    function(){const correct='(2x+3)/(x²+3x+5)';return exerciseFrom('Calcula f′(x) si f(x)=ln(x²+3x+5).',correct,['1/(x²+3x+5)','(2x+3)ln(x²+3x+5)','(x²+3x+5)/(2x+3)'],RULES.logarithm.name,'Para u=x²+3x+5, u′=2x+3. Usa (ln u)′=u′/u.',3);},
+    function(){const correct='6x²cos(x³)+2xe^(x²)';return exerciseFrom('Calcula f′(x) si f(x)=2sin(x³)+e^(x²).',correct,['6x²sin(x³)+2xe^(x²)','3x²cos(x³)+xe^(x²)','6xcos(x³)+2xe^(x²)'],'Suma + regla de la cadena','Deriva cada término: 2·cos(x³)·3x²=6x²cos(x³), y (e^(x²))′=2xe^(x²).',4);},
+    function(){const correct='2xsin(x)+(x²−1)cos(x)';return exerciseFrom('Calcula f′(x) si f(x)=(x²−1)sin(x).',correct,['2xcos(x)+(x²−1)sin(x)','2xsin(x)−(x²−1)cos(x)','x²cos(x)−sin(x)'],RULES.product.name,'u=x²−1, v=sin(x). Entonces u′=2x y v′=cos(x); aplica u′v+uv′.',3);},
+    function(){const correct='(1+x²)/(1−x²)²';return exerciseFrom('Calcula f′(x) si f(x)=x/(1−x²).',correct,['−2x/(1−x²)²','(1−x²)/(1+x²)²','(1−x²)²/(1+x²)'],RULES.quotient.name,'u=x, v=1−x²; u′=1 y v′=−2x. Entonces el numerador es 1−x²+2x²=1+x².',4);},
+    function(){const correct='12x³−10x';return exerciseFrom('Calcula f′(x) si f(x)=3x⁴−5x²+7.',correct,['12x³−10x+7','3x³−5x','12x⁴−10x²'],'Regla de la potencia','Aplica (xⁿ)′=nxⁿ⁻¹ término a término: 12x³−10x.',2);},
+    function(){const correct='10x⁴+24x²−2x';return exerciseFrom('Calcula f′(x) si f(x)=(2x³−1)(x²+4).',correct,['10x⁴+24x²−1','6x⁴+8x²−2x','10x³+24x−2'],RULES.product.name,'u′=6x², v′=2x. Entonces u′v+uv′=6x²(x²+4)+(2x³−1)(2x).',4);},
+    function(){const correct='y′=−(2x+y)/(x+3y²)';return exerciseFrom('Usando derivación implícita, calcula y′ si x²+xy+y³=4.',correct,['y′=(2x+y)/(x+3y²)','y′=−(2x+y)/(1+3y²)','y′=−(2x+xy)/(x+3y²)'],'Derivación implícita','Deriva: 2x+y+xy′+3y²y′=0. Agrupa y′(x+3y²)=−(2x+y).',4);},
+    function(){const correct='f′(2)=9';return exerciseFrom('Si f(x)=x³−2x²+5x−1, ¿cuál es f′(2)?',correct,['f′(2)=7','f′(2)=11','f′(2)=5'],'Derivada en un punto','f′(x)=3x²−4x+5. Al evaluar x=2: 12−8+5=9.',3);}
+  ];
+  return pick(templates)();
 }
 let exercises=[];
 let exIndex=0,score=0,attempts=0,selected=null,roundAnswered=false;
