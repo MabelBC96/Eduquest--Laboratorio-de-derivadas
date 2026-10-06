@@ -31,7 +31,7 @@ window.MathJax = {
       <span class="pill">EDUQUEST · LABORATORIO DE DERIVADAS</span>
       <h1>Eduquest<br><span>Matemáticas interactivas</span></h1>
       <p>Un espacio para aprender, practicar y representar gráficamente las derivadas de forma dinámica.</p>
-      <button id="startLab" class="btn primary welcome-button" type="button">Ingresar a la aplicación <span>→</span></button>
+      <button id="startLab" class="btn primary welcome-button" type="button" onclick="(function(){var w=document.getElementById('welcomeOverlay'),l=document.getElementById('loginOverlay'),n=document.getElementById('userName');if(w){w.classList.add('is-hidden');w.style.pointerEvents='none';}if(l){l.classList.add('open');l.style.display='grid';l.style.visibility='visible';l.style.pointerEvents='auto';l.style.zIndex='10001';l.setAttribute('aria-hidden','false');}if(n){setTimeout(function(){n.focus();},80);}})()">Ingresar a la aplicación <span>→</span></button>
     </div>
   </div>
 </div>
@@ -48,7 +48,7 @@ window.MathJax = {
       <div><label for="userRole">Perfil</label><select id="userRole"><option value="Estudiante">Estudiante</option><option value="Docente">Docente</option></select></div>
       <div><label for="userGrade">Grado / curso</label><input id="userGrade" value="10.º" placeholder="Ej. 10.º"></div>
     </div>
-    <div class="btnrow"><button id="loginBtn" class="btn primary">Entrar a Eduquest →</button></div>
+    <div class="btnrow"><button id="loginBtn" class="btn primary" type="button" onclick="(function(){var n=document.getElementById('userName'),s=document.getElementById('loginStatus'),name=(n&&n.value||'').trim();if(!name){if(s)s.textContent='Escribe tu nombre para ingresar.';if(n)n.focus();return;}var role=(document.getElementById('userRole')||{}).value||'Estudiante',grade=((document.getElementById('userGrade')||{}).value||'').trim()||'No indicado',now=new Date(),entry={name:name,role:role,grade:grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};try{var h=JSON.parse(localStorage.getItem('eduquestVisits')||'[]');if(!Array.isArray(h))h=[];h.unshift(entry);localStorage.setItem('eduquestVisits',JSON.stringify(h.slice(0,100)));sessionStorage.setItem('eduquestCurrent',JSON.stringify(entry));}catch(e){};var cu=document.getElementById('currentUser'),wu=document.getElementById('welcomeUser'),dn=document.getElementById('dashboardName');if(cu)cu.textContent=name+' · '+role;if(wu)wu.textContent='· '+name;if(dn)dn.textContent=name.split(' ')[0];var l=document.getElementById('loginOverlay'),w=document.getElementById('welcomeOverlay');if(l){l.classList.remove('open');l.style.display='none';l.setAttribute('aria-hidden','true');}if(w){w.classList.add('is-hidden');w.style.pointerEvents='none';}document.querySelectorAll('section').forEach(function(x){x.classList.toggle('active',x.id==='inicio');});window.scrollTo(0,0);if(s)s.textContent='Ingreso correcto.';})()">Entrar a Eduquest →</button></div>
     <div id="loginStatus" class="status" role="status">El nombre es obligatorio.</div>
   </div>
 </div>
