@@ -187,3 +187,42 @@ function boot(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
+
+
+/* EDUQUEST_INGRESO_RESILIENTE_V5 */
+(function(){
+ 'use strict';
+ function install(){
+  if(window.__eduquestIngresoV5)return; window.__eduquestIngresoV5=true;
+  const $=id=>document.getElementById(id);
+  document.addEventListener('click',function(e){
+   const start=e.target&&e.target.closest?e.target.closest('#startLab'):null;
+   const loginBtn=e.target&&e.target.closest?e.target.closest('#loginBtn'):null;
+   if(start){
+    e.preventDefault();e.stopImmediatePropagation();
+    const w=$('welcomeOverlay'),l=$('loginOverlay');
+    if(w){w.classList.add('is-hidden');w.style.pointerEvents='none';w.setAttribute('aria-hidden','true');}
+    if(l){l.classList.add('open');l.style.display='grid';l.style.visibility='visible';l.style.pointerEvents='auto';l.style.zIndex='10001';l.setAttribute('aria-hidden','false');}
+    const n=$('userName');if(n)setTimeout(()=>n.focus(),80);
+    return;
+   }
+   if(loginBtn){
+    e.preventDefault();e.stopImmediatePropagation();
+    const name=($('userName')?.value||'').trim(),status=$('loginStatus');
+    if(!name){if(status)status.textContent='Escribe tu nombre para ingresar.';$('userName')?.focus();return;}
+    const role=$('userRole')?.value||'Estudiante',grade=($('userGrade')?.value||'').trim()||'No indicado',now=new Date();
+    const entry={name,role,grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};
+    try{let history=JSON.parse(localStorage.getItem('eduquestVisits')||'[]');if(!Array.isArray(history))history=[];history.unshift(entry);localStorage.setItem('eduquestVisits',JSON.stringify(history.slice(0,100)));sessionStorage.setItem('eduquestCurrent',JSON.stringify(entry));}catch(err){console.warn('Eduquest: almacenamiento no disponible',err);}
+    ['currentUser','welcomeUser','dashboardName'].forEach((id,i)=>{const el=$(id);if(el)el.textContent=[name+' · '+role,'· '+name,name.split(' ')[0]][i];});
+    const l=$('loginOverlay'),w=$('welcomeOverlay');if(l){l.classList.remove('open');l.style.display='none';l.setAttribute('aria-hidden','true');}if(w){w.classList.add('is-hidden');w.style.pointerEvents='none';}
+    document.querySelectorAll('section').forEach(s=>s.classList.toggle('active',s.id==='inicio'));
+    document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('active',b.dataset.go==='inicio'));
+    window.scrollTo(0,0);if(status)status.textContent='Ingreso correcto.';
+    return;
+   }
+   const option=e.target&&e.target.closest?e.target.closest('#exerciseOptions .option'):null;
+   if(option&&!option.disabled){document.querySelectorAll('#exerciseOptions .option').forEach(b=>b.classList.toggle('selected',b===option));}
+  },true);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
