@@ -62,7 +62,7 @@ function generateRandomExercise(){
   ];
   return pick(templates)();
 }
-let exercises=[];
+function formatMath(s){return String(s).replace(/\^([0-9]+)/g,'<sup>$1</sup>').replace(/−/g,'−').replace(/\be\^/g,'e<sup>');}\nlet exercises=[];
 let exIndex=0,score=0,attempts=0,selected=null,roundAnswered=false;
 function newExerciseRound(){
   exercises=Array.from({length:12},()=>generateRandomExercise());
@@ -73,10 +73,10 @@ function newExerciseRound(){
 }
 function renderExercise(){
   const e=exercises[exIndex];
-  $('exerciseQuestion').textContent=e.q;
+  $('exerciseQuestion').innerHTML=formatMath(e.q);
   $('exerciseCounter').textContent='Ejercicio '+(exIndex+1)+' de '+exercises.length;
   $('exerciseLevel').textContent='NIVEL '+e.level;
-  $('exerciseOptions').innerHTML=shuffle(e.o.map((x,i)=>({text:x,index:i}))).map(x=>'<button class="option" data-option="'+x.index+'">'+x.text+'</button>').join('');
+  $('exerciseOptions').innerHTML=shuffle(e.o.map((x,i)=>({text:x,index:i}))).map(x=>'<button class="option" data-option="'+x.index+'">'+formatMath(x.text)+'</button>').join('');
   $('exerciseFeedback').innerHTML='Selecciona una opción y pulsa <b>Comprobar</b>.';
   selected=null;roundAnswered=false;
   $('progressValue').textContent=Math.round((exIndex/exercises.length)*100)+'%';
@@ -88,7 +88,7 @@ function checkExercise(){
   qsa('.option').forEach(b=>{const i=Number(b.dataset.option);if(i===e.a)b.classList.add('correct');if(i===selected&&i!==e.a)b.classList.add('wrong');b.disabled=true});
   if(selected===e.a){
     score++;$('scoreValue').textContent=score;
-    $('exerciseFeedback').innerHTML='<b>✅ ¡Correcto!</b><br>'+e.e.steps+'<br><br><b>Regla:</b> '+e.e.rule+'<br><b>Respuesta:</b> '+e.e.correct;
+    $('exerciseFeedback').innerHTML='<b>✅ ¡Correcto!</b><br>'+e.e.steps+'<br><br><b>Regla:</b> '+e.e.rule+'<br><b>Respuesta:</b> '+formatMath(e.e.correct);
   }else{
     $('exerciseFeedback').innerHTML='<b>❌ No es correcto.</b><br><b>Respuesta correcta:</b> '+e.e.correct+'<br><b>Regla:</b> '+e.e.rule+'<br><b>Procedimiento:</b> '+e.e.steps;
   }
