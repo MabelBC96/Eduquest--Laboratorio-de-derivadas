@@ -31,7 +31,7 @@ window.MathJax = {
       <span class="pill">EDUQUEST · LABORATORIO DE DERIVADAS</span>
       <h1>Eduquest<br><span>Matemáticas interactivas</span></h1>
       <p>Un espacio para aprender, practicar y representar gráficamente las derivadas de forma dinámica.</p>
-      <button id="startLab" class="btn primary welcome-button" type="button" onclick="window.__openEduquestLogin()">Ingresar a la aplicación <span>→</span></button>
+      <button id="startLab" class="btn primary welcome-button" type="button">Ingresar a la aplicación <span>→</span></button>
     </div>
   </div>
 </div>
@@ -48,7 +48,7 @@ window.MathJax = {
       <div><label for="userRole">Perfil</label><select id="userRole"><option value="Estudiante">Estudiante</option><option value="Docente">Docente</option></select></div>
       <div><label for="userGrade">Grado / curso</label><input id="userGrade" value="10.º" placeholder="Ej. 10.º"></div>
     </div>
-    <div class="btnrow"><button id="loginBtn" class="btn primary" onclick="window.__enterEduquest()">Entrar a Eduquest →</button></div>
+    <div class="btnrow"><button id="loginBtn" class="btn primary">Entrar a Eduquest →</button></div>
     <div id="loginStatus" class="status" role="status">El nombre es obligatorio.</div>
   </div>
 </div>
@@ -200,36 +200,6 @@ window.MathJax = {
 </main>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="./app.js"></script><script>
-window.__openEduquestLogin=function(){
-  var overlay=document.getElementById('welcomeOverlay');
-  var login=document.getElementById('loginOverlay');
-  if(overlay){overlay.classList.add('is-hidden');overlay.style.pointerEvents='none';}
-  if(login){login.classList.add('open');login.setAttribute('aria-hidden','false');login.style.display='grid';}
-  var name=document.getElementById('userName'); if(name){setTimeout(function(){name.focus();},100);}
-};
-window.__enterEduquest=function(){
-  var name=document.getElementById('userName');
-  var status=document.getElementById('loginStatus');
-  if(!name || !name.value.trim()){if(status)status.textContent='Escribe tu nombre para ingresar.';return;}
-  var login=document.getElementById('loginOverlay');
-  var overlay=document.getElementById('welcomeOverlay');
-  if(login){login.classList.remove('open');login.style.display='none';}
-  if(overlay){overlay.classList.add('is-hidden');overlay.style.pointerEvents='none';}
-  document.querySelectorAll('section').forEach(function(s){s.classList.toggle('active',s.id==='inicio');});
-  document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('active',b.dataset.go==='inicio');});
-  window.scrollTo(0,0);
-};
-
-(function(){
-  function ensurePractice(){
-    var box=document.getElementById('exerciseOptions');
-    if(!box || box.children.length) return;
-    box.innerHTML='<button class="option" data-option="0">2x</button><button class="option" data-option="1">x</button><button class="option" data-option="2">2</button><button class="option" data-option="3">x²</button>';
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(ensurePractice,500);});
-  else setTimeout(ensurePractice,500);
-})();
-</script>
+<script src="./app.js"></script>
 </body>
 </html>
