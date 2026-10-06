@@ -25,17 +25,92 @@ function saveLesson(){localStorage.setItem('eduquestLesson',JSON.stringify(lesso
 async function copyLesson(){if(!$('lessonOutput').innerText.trim()||$('lessonOutput').innerText.includes('Aquí aparecerá'))generateLesson();try{await navigator.clipboard.writeText($('lessonOutput').innerText);showToast('Guion copiado')}catch(_){showToast('No fue posible copiar automáticamente.')}}
 function exportLesson(){const blob=new Blob([JSON.stringify({app:'Eduquest',type:'secuencia-didactica',version:2,exportedAt:new Date().toISOString(),data:lessonData()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='eduquest-secuencia-didactica.json';a.click();URL.revokeObjectURL(url)}
 function importLesson(e){const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result).data||JSON.parse(r.result);Object.entries({lessonTitle:'title',lessonLevel:'level',lessonTime:'time',lessonObj:'obj',lessonQ:'q',lessonE:'e'}).forEach(([id,k])=>$(id).value=d[k]||'');generateLesson()}catch(_){$('lessonStatus').textContent='El JSON no es válido.'}e.target.value=''};r.readAsText(f)}
-const exercises=[
-{q:'¿Cuál es la derivada de f(x)=x²?',o:['2x','x','x²','2'],a:0,e:'Por la regla de la potencia, (x²)′=2x.'},
-{q:'¿Cuál es la derivada de sin(x)?',o:['−sin(x)','cos(x)','tan(x)','sec²(x)'],a:1,e:'La derivada de sin(x) es cos(x).'},
-{q:'¿Cuál es la derivada de (3x²+1)⁵?',o:['5(3x²+1)⁴','30x(3x²+1)⁴','15x(3x²+1)⁴','30x(3x²+1)⁵'],a:1,e:'Se aplica la regla de la cadena: 5(3x²+1)⁴·6x.'},
-{q:'Si f′(x) cambia de positivo a negativo, ¿qué puede indicar?',o:['Un mínimo local','Un máximo local','Una asíntota','Una constante'],a:1,e:'El cambio de creciente a decreciente indica un máximo local.'},
-{q:'¿Cuál es la derivada de cos(x)?',o:['sin(x)','−sin(x)','cos(x)','−cos(x)'],a:1,e:'La derivada de cos(x) es −sin(x).'}
-];
-let exIndex=0,score=0,attempts=0,selected=null;
-function renderExercise(){const e=exercises[exIndex];$('exerciseQuestion').textContent=e.q;$('exerciseCounter').textContent=`Ejercicio ${exIndex+1} de ${exercises.length}`;$('exerciseLevel').textContent=`NIVEL ${exIndex<2?1:exIndex<4?2:3}`;$('exerciseOptions').innerHTML=e.o.map((x,i)=>`<button class="option" data-option="${i}">${x}</button>`).join('');$('exerciseFeedback').textContent='Selecciona una opción.';selected=null;$('progressValue').textContent=`${Math.round((exIndex/exercises.length)*100)}%`}
-function checkExercise(){if(selected===null)return showToast('Selecciona una respuesta.');const e=exercises[exIndex];attempts++;$('attemptValue').textContent=attempts;qsa('.option').forEach((b,i)=>{if(i===e.a)b.classList.add('correct');if(i===selected&&i!==e.a)b.classList.add('wrong')});if(selected===e.a){score++;$('scoreValue').textContent=score;$('exerciseFeedback').textContent='¡Correcto! '+e.e}else $('exerciseFeedback').textContent='Revisa la respuesta. '+e.e}
-function nextExercise(){exIndex=(exIndex+1)%exercises.length;renderExercise()}
+const RULES={
+constant:{name:'Regla de la constante',formula:'(c)′ = 0'},
+identity:{name:'Regla de la identidad',formula:'(x)′ = 1'},
+power:{name:'Regla de la potencia',formula:'(xⁿ)′ = n·xⁿ⁻¹'},
+multiple:{name:'Múltiplo constante',formula:'(c·f)′ = c·f′'},
+sum:{name:'Suma y resta',formula:'(f ± g)′ = f′ ± g′'},
+product:{name:'Regla del producto',formula:'(uv)′ = u′v + uv′'},
+quotient:{name:'Regla del cociente',formula:'(u/v)′ = (u′v − uv′)/v²'},
+exponential:{name:'Regla exponencial',formula:'(eᵘ)′ = eᵘ·u′'},
+logarithm:{name:'Regla del logaritmo',formula:'(ln u)′ = u′/u'},
+trig:{name:'Regla trigonométrica',formula:'(sin u)′=cos(u)u′; (cos u)′=−sin(u)u′; (tan u)′=sec²(u)u′'},
+chain:{name:'Regla de la cadena',formula:'(f(g(x)))′ = f′(g(x))·g′(x)'}
+};
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[rnd(0,a.length-1)];
+const shuffle=a=>a.map(v=>({v,r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v);
+const exerciseFrom=(q,correct,rule,steps,level=1)=>{
+  const distractors=shuffle([
+    correct,
+    pick(['0','1','x','2x','x²','−x','2','3x','x+1','sin(x)','cos(x)','−sin(x)','sec²(x)']),
+    pick(['x²+1','2x+1','x−1','3x²','4x','−2x','5x²','x³'])
+  ]).filter((v,i,a)=>a.indexOf(v)===i);
+  while(distractors.length<4){
+    const extra=pick(['0','1','x','2x','3x','−x','x²','4x²','6x','−sin(x)','cos(x)','2']);
+    if(!distractors.includes(extra))distractors.push(extra);
+  }
+  const opts=distractors.slice(0,4),a=opts.indexOf(correct);
+  return {q,o:opts,a,e:{rule,steps,correct},level};
+};
+function generateRandomExercise(){
+  const n=rnd(2,6), c=rnd(2,7), k=rnd(1,9), m=rnd(2,5), p=rnd(2,6);
+  const type=rnd(0,11);
+  if(type===0)return exerciseFrom('Deriva f(x) = '+c+' (constante).','0',RULES.constant.name,'1. La función es una constante. 2. Las constantes no cambian con x. 3. Por tanto, f′(x)=0.',1);
+  if(type===1)return exerciseFrom('Deriva f(x) = x.','1',RULES.identity.name,'1. La función es la identidad. 2. La pendiente de y=x es 1. 3. Por tanto, f′(x)=1.',1);
+  if(type===2){const correct=n+'x^'+(n-1);return exerciseFrom('Deriva f(x) = x^'+n+'.',correct,RULES.power.name,'1. Aplica n·x^(n−1). 2. Sustituye n='+n+'. 3. Resultado: '+correct+'.',1)}
+  if(type===3){const correct=c+'*'+m+'x^'+(m-1);return exerciseFrom('Deriva f(x) = '+c+'x^'+m+'.',correct,RULES.multiple.name,'1. Conserva el múltiplo '+c+'. 2. Deriva x^'+m+' como '+m+'x^'+(m-1)+'. 3. Multiplica: '+c+'·'+m+'x^'+(m-1)+' = '+correct+'.',1)}
+  if(type===4){const correct=n+'x^'+(n-1)+' + '+c;return exerciseFrom('Deriva f(x) = x^'+n+' + '+c+'x.',correct,RULES.sum.name,'1. Deriva cada término. 2. (x^'+n+')′='+n+'x^'+(n-1)+'. 3. ('+c+'x)′='+c+'. 4. Suma los resultados.',2)}
+  if(type===5){const correct=m+'x^'+(m-1)+'(x^'+n+') + x^'+m+'('+n+'x^'+(n-1)+')';return exerciseFrom('Usa la regla del producto en f(x)=x^'+m+'·x^'+n+'.',correct,RULES.product.name,'1. u=x^'+m+', v=x^'+n+'. 2. u′='+m+'x^'+(m-1)+' y v′='+n+'x^'+(n-1)+'. 3. Aplica u′v+uv′. 4. Puedes simplificar después.',2)}
+  if(type===6){const correct='(2x·(x^'+m+' + '+k+') − (x²+1)·'+m+'x^'+(m-1)+')/(x^'+m+' + '+k+')²';return exerciseFrom('Deriva f(x)=(x²+1)/(x^'+m+' + '+k+').',correct,RULES.quotient.name,'1. u=x²+1, v=x^'+m+'+'+k+'. 2. u′=2x y v′='+m+'x^'+(m-1)+'. 3. Sustituye en (u′v−uv′)/v².',3)}
+  if(type===7){const correct='e^('+c+'x)·'+c;return exerciseFrom('Deriva f(x)=e^('+c+'x).',correct,RULES.exponential.name,'1. Identifica u='+c+'x. 2. (e^u)′=e^u·u′. 3. u′='+c+'. 4. Resultado: '+correct+'.',2)}
+  if(type===8){const correct=c+'/x';return exerciseFrom('Deriva f(x)=ln('+c+'x).',correct,RULES.logarithm.name,'1. Identifica u='+c+'x. 2. (ln u)′=u′/u. 3. u′='+c+'. 4. c/('+c+'x)=1/x. Para evitar confusión, la respuesta equivalente es '+correct+'.',2)}
+  if(type===9){const trig=pick(['sin','cos','tan']);const inner=c+'x';let correct,steps;if(trig==='sin'){correct='cos('+inner+')·'+c;steps='1. Exterior: sin(u) → cos(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica: cos('+inner+')·'+c+'.'}else if(trig==='cos'){correct='−sin('+inner+')·'+c;steps='1. Exterior: cos(u) → −sin(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica.'}else{correct='sec²('+inner+')·'+c;steps='1. Exterior: tan(u) → sec²(u). 2. Interior u='+inner+' tiene derivada '+c+'. 3. Multiplica.'}return exerciseFrom('Deriva f(x)='+trig+'('+inner+').',correct,RULES.trig.name,steps,2)}
+  const correct=(n*c)+'x^'+(n-1);return exerciseFrom('Deriva f(x)=('+c+'x²+'+k+')^'+n+'.',correct,RULES.chain.name,'1. Función exterior: u^'+n+'. 2. Derivada exterior: '+n+'u^'+(n-1)+'. 3. Interior u='+c+'x²+'+k+' tiene derivada '+(2*c)+'x. 4. Multiplica: '+n+'·('+c+'x²+'+k+')^'+(n-1)+'·'+(2*c)+'x = '+correct+'.',3);
+}
+let exercises=[];
+let exIndex=0,score=0,attempts=0,selected=null,roundAnswered=false;
+function newExerciseRound(){
+  exercises=Array.from({length:12},()=>generateRandomExercise());
+  exIndex=0;score=0;attempts=0;selected=null;roundAnswered=false;
+  if($('scoreValue'))$('scoreValue').textContent='0';
+  if($('attemptValue'))$('attemptValue').textContent='0';
+  renderExercise();
+}
+function renderExercise(){
+  const e=exercises[exIndex];
+  $('exerciseQuestion').textContent=e.q;
+  $('exerciseCounter').textContent='Ejercicio '+(exIndex+1)+' de '+exercises.length;
+  $('exerciseLevel').textContent='NIVEL '+e.level;
+  $('exerciseOptions').innerHTML=shuffle(e.o.map((x,i)=>({text:x,index:i}))).map(x=>'<button class="option" data-option="'+x.index+'">'+x.text+'</button>').join('');
+  $('exerciseFeedback').innerHTML='Selecciona una opción y pulsa <b>Comprobar</b>.';
+  selected=null;roundAnswered=false;
+  $('progressValue').textContent=Math.round((exIndex/exercises.length)*100)+'%';
+}
+function checkExercise(){
+  if(roundAnswered)return showToast('Ya comprobaste este ejercicio. Pulsa “Siguiente”.');
+  if(selected===null)return showToast('Selecciona una respuesta.');
+  const e=exercises[exIndex];attempts++;$('attemptValue').textContent=attempts;
+  qsa('.option').forEach(b=>{const i=Number(b.dataset.option);if(i===e.a)b.classList.add('correct');if(i===selected&&i!==e.a)b.classList.add('wrong');b.disabled=true});
+  if(selected===e.a){
+    score++;$('scoreValue').textContent=score;
+    $('exerciseFeedback').innerHTML='<b>✅ ¡Correcto!</b><br>'+e.e.steps+'<br><br><b>Regla:</b> '+e.e.rule+'<br><b>Respuesta:</b> '+e.e.correct;
+  }else{
+    $('exerciseFeedback').innerHTML='<b>❌ No es correcto.</b><br><b>Respuesta correcta:</b> '+e.e.correct+'<br><b>Regla:</b> '+e.e.rule+'<br><b>Procedimiento:</b> '+e.e.steps;
+  }
+  roundAnswered=true;
+  $('progressValue').textContent=Math.round(((exIndex+1)/exercises.length)*100)+'%';
+}
+function nextExercise(){
+  if(exIndex<exercises.length-1){exIndex++;renderExercise();}
+  else{
+    const pct=Math.round((score/exercises.length)*100);
+    $('exerciseFeedback').innerHTML='<b>🎉 Ronda terminada.</b><br>Obtuviste '+score+' de '+exercises.length+' ('+pct+'%).<br><br><b>Diagnóstico:</b> '+(pct>=90?'Dominio excelente.':pct>=70?'Buen desempeño; refuerza las reglas donde fallaste.':'Conviene repasar las reglas y practicar nuevamente.')+'<br><br>Pulsa “Siguiente” para generar una nueva ronda aleatoria.';
+    $('nextExercise').textContent='Nueva ronda aleatoria';
+    $('nextExercise').onclick=()=>{$('nextExercise').textContent='Siguiente';newExerciseRound()};
+  }
+}
 function getHistory(){try{return JSON.parse(localStorage.getItem('eduquestVisits')||'[]')}catch(_){return[]}}
 function recordLogin(){const name=$('userName').value.trim();if(!name){$('loginStatus').textContent='Escribe tu nombre para ingresar.';return false}const role=$('userRole').value,grade=$('userGrade').value.trim()||'No indicado',now=new Date(),entry={name,role,grade,date:now.toLocaleDateString('es-CO'),time:now.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'})};const h=getHistory();h.unshift(entry);localStorage.setItem('eduquestVisits',JSON.stringify(h.slice(0,100)));sessionStorage.setItem('eduquestCurrent',JSON.stringify(entry));updateUser(entry);renderHistory();return true}
 function updateUser(e){if(!e)return;$('currentUser').textContent=`${e.name} · ${e.role}`;$('welcomeUser').textContent=`· ${e.name}`;$('dashboardName').textContent=e.name.split(' ')[0]}
