@@ -63,14 +63,18 @@ function generateRandomExercise(){
   return pick(templates)();
 }
 function latexExpr(s){
-  return String(s)
+  let out=String(s)
     .replace(/²/g,'^2').replace(/³/g,'^3').replace(/⁴/g,'^4')
     .replace(/−/g,'-')
     .replace(/f′/g,"f'")
     .replace(/y′/g,"y'")
     .replace(/e\^\(([^()]*)\)/g,'e^{$1}')
+    .replace(/\)\^([0-9]+)/g,')^{$1}')
     .replace(/([a-zA-Z0-9]+)\^([0-9]+)/g,'$1^{$2}')
-    .replace(/\\b(sin|cos|tan|ln)\\b/g,'\\\\$1');
+    .replace(/\b(sin|cos|tan|ln)\b/g,'\\$1');
+  const slash=out.match(/^(.+)\/(.+)$/);
+  if(slash && !out.includes('\\frac')) out='\\frac{'+slash[1]+'}{'+slash[2]+'}';
+  return out;
 }
 function formatMath(s){
   return '\\\\('+latexExpr(s)+'\\\\)';
