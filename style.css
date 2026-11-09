@@ -89,3 +89,97 @@ input[type=range]{accent-color:#55c9a5}
 @media(max-width:700px){
  .welcome-shade{background:linear-gradient(0deg,rgba(34,26,47,.97),rgba(50,36,65,.70) 48%,rgba(50,36,65,.12))}
 }
+
+
+/* Eduquest Light: superficies claras y acentos vivos */
+:root{
+ --bg:#fffaf4;--panel:#ffffff;--panel2:#fff1e8;--blue:#7652b8;
+ --turq:#218c72;--gold:#b87908;--cream:#fffaf4;--muted:#655b70;
+ --line:#eadff0;--text:#30243d;--shadow:0 12px 34px rgba(67,43,82,.09);
+ --purple:#7652b8;--coral:#e95d68;--mint:#218c72;--mango:#b87908;
+ color-scheme:light;
+}
+body{
+ background:radial-gradient(circle at 90% 2%,#ff8b7b1c,transparent 25%),
+ radial-gradient(circle at 5% 85%,#55c9a51c,transparent 25%),
+ linear-gradient(135deg,#fffaf4,#f8f3ff 58%,#fff7ed);
+ color:var(--text);
+}
+aside{background:rgba(255,255,255,.96);border-right:1px solid #eadff0;box-shadow:5px 0 24px #46305a0a}
+.brand b{color:#392b49}.brand small,.nav-title{color:#82738f}
+.logo{border-color:#8b5cf6;color:#e95d68;background:#f5efff;box-shadow:none}
+nav button{color:#655b70}
+nav button:hover,nav button.active{background:linear-gradient(100deg,#f1e9ff,#fff0eb);border-color:#ddc9f5;color:#493363}
+nav button.active{box-shadow:inset 3px 0 #e95d68}
+.status{background:#fff;border-color:#eadff0;color:#655b70}
+.dot{background:#218c72}
+main{color:#30243d}
+.topbar{background:#fffaf4e8}
+.welcome-user{color:#82738f}
+.card{background:linear-gradient(145deg,#fff,#fffaf7);border:1px solid #eadff0;box-shadow:var(--shadow)}
+.card:hover{border-color:#cbb4e8}
+h1,h2,h3{color:#392b49}
+.accent{color:#7652b8}.green{color:#218c72}.orange{color:#b87908}
+.muted{color:#71667b}
+.pill{border-color:#d9c8ef;color:#67459a;background:#f4edff}
+.section-heading>span,.journey span,.topic-number{color:#d16b42}
+.hero-dashboard{background:linear-gradient(120deg,#f1e8ff 0%,#fff0e9 55%,#fff7df 100%);border-color:#e8d9f2}
+.hero-dashboard:after{border-color:#d8c2ef;box-shadow:0 0 70px #e95d6818}
+.hero-dashboard h1,.hero-dashboard h1 span{color:#493363}
+.hero-dashboard h1 span{color:#d65b65}
+.hero-dashboard .subtitle{color:#655b70}
+.dashboard-formula{-webkit-text-stroke:1px #8b5cf655}
+.journey{background:#fff;border-color:#eadff0;color:#392b49}
+.journey p{color:#71667b}
+.controls label,label{color:#655b70}
+input,select,textarea{background:#fff;color:#30243d;border:1px solid #d9cde2}
+input:focus,select:focus,textarea:focus{border-color:#9a78cb;box-shadow:0 0 0 3px #8b5cf620}
+.btn{background:#f3edf8;color:#493363;border-color:#d9c8e8}
+.btn:hover{filter:brightness(.98)}
+.btn.primary{background:#ffc857;color:#493363;border-color:#f0b83e}
+.btn.green{background:#55c9a5;color:#173b35;border-color:#43b994}
+.btn.orange{background:#ff8a70;color:#4a2528;border-color:#f47762}
+.formula-box{background:#fff8ed;color:#392b49;border-left-color:#e95d68}
+.tablewrap th{color:#7652b8}
+.tablewrap td,.tablewrap th{border-bottom-color:#eee5f2}
+.metric{background:#fff;border-color:#eadff0}
+.metric b,.rubric b{color:#9a6500}
+.step{background:#fbf8ff;border-left-color:#8b5cf6}
+.step strong{color:#218c72}
+.rubric>div{background:#fff;border-color:#eadff0}
+.rubric-total{background:#fff6dd!important}
+.options .option{background:#fff;color:#493363;border-color:#eadff0}
+.option.selected{border-color:#d2b4f5;background:#f4edff}
+.option.correct{border-color:#55b99a;background:#eaf8f2}
+.option.wrong{border-color:#ee9b8d;background:#fff0ed}
+.feedback{background:#f7f2fb;color:#655b70}
+.history-item{background:#fff;border-color:#eadff0}
+.history-item small{color:#71667b}
+.toast{background:#fff;color:#30243d;border-color:#ffc857}
+.login-overlay{background:rgba(54,37,68,.38)}
+.login-card{background:linear-gradient(145deg,#fff,#fff3eb);border:1px solid #e3d3ef;box-shadow:0 30px 90px #46305a25}
+.login-icon{background:#f1e8ff;color:#7652b8}
+.welcome-overlay{background:#fffaf4}
+.welcome-backdrop{filter:blur(20px) brightness(.88) saturate(.85)}
+.welcome-panel{border-color:#e7d9ef;background:#fff;box-shadow:0 30px 100px #46305a25}
+.welcome-shade{background:linear-gradient(90deg,rgba(255,250,244,.98),rgba(255,250,244,.88) 43%,rgba(255,250,244,.14) 90%),linear-gradient(0deg,rgba(255,250,244,.22),transparent 52%)}
+.welcome-content h1{color:#392b49}
+.welcome-content h1 span{color:#d65b65}
+.welcome-content p{color:#655b70}
+.ar-stage{background:radial-gradient(circle at 50% 40%,#eee4ff,#fff7ef 74%);border-color:#e4d8ef}
+.ar-placeholder{color:#655b70}
+.ar-placeholder b{color:#7652b8}
+.mission-item{background:#fff;border-color:#eadff0}
+.mission-item strong{color:#392b49}
+.mission-item p{color:#71667b}
+.mission-item.done{border-color:#55b99a;background:#eaf8f2}
+.badge{background:#fff4d8;border-color:#f0d58d;color:#865800}
+input[type=range]{accent-color:#7652b8}
+::selection{background:#e8dcfa;color:#392b49}
+:focus-visible{outline:3px solid #e95d68;outline-offset:3px}
+@media(max-width:700px){
+ .topbar{background:#fffaf4ee}
+ .welcome-shade{background:linear-gradient(0deg,rgba(255,250,244,.98),rgba(255,250,244,.86) 48%,rgba(255,250,244,.12))}
+ .welcome-content h1{color:#392b49}
+ .welcome-content p{color:#655b70}
+}
