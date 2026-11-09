@@ -27,3 +27,65 @@ section{display:none;max-width:1250px;margin:auto}section.active{display:block}.
 .badge{padding:10px 14px;border-radius:999px;background:#ffd45a18;border:1px solid #ffd45a66;color:var(--gold);font-weight:800}
 input[type=range]{padding:0;min-height:28px;accent-color:var(--turq)}
 @media(max-width:700px){.ar-stage{min-height:280px}.ar-stage a-scene{height:340px}}
+
+
+/* Identidad cromática Eduquest: uva, coral, mango y menta */
+:root{
+ --bg:#211b2e;--panel:#30263f;--panel2:#3b2c4d;--blue:#a78bfa;
+ --turq:#55c9a5;--gold:#ffc857;--cream:#fff8ed;--muted:#d8cde2;
+ --line:#594568;--text:#fffaf4;--shadow:0 18px 55px rgba(10,5,20,.32);
+ --purple:#8b5cf6;--coral:#ff6b6b;--mint:#55c9a5;--mango:#ffc857;
+}
+body{
+ background:radial-gradient(circle at 88% 4%,#ff6b6b20,transparent 26%),
+ radial-gradient(circle at 8% 88%,#55c9a51c,transparent 24%),
+ linear-gradient(145deg,#211b2e,#292035 58%,#241b32);
+}
+aside{background:rgba(34,26,47,.97);border-right-color:#594568}
+.logo{border-color:#a78bfa;color:#ffc857;box-shadow:0 0 22px #8b5cf633}
+.nav-title{color:#c5a8ed}
+nav button:hover,nav button.active{
+ background:linear-gradient(100deg,#68449b,#49365f);border-color:#a78bfa;color:#fffaf4
+}
+nav button.active{box-shadow:inset 3px 0 #ffc857}
+.topbar{background:#211b2ee8}
+.card{background:linear-gradient(145deg,rgba(62,46,79,.97),rgba(43,33,58,.97));border-color:#594568}
+.card:hover{border-color:#a78bfa}
+.accent{color:#c4a7ff}.green{color:#65d6b0}.orange{color:#ffc857}
+.pill{border-color:#a78bfa77;color:#e2d5ff;background:#8b5cf61c}
+.section-heading>span,.journey span,.topic-number{color:#ffc857}
+.hero-dashboard{background:linear-gradient(125deg,#67459a 0%,#3d2b55 52%,#282037 100%)}
+.hero-dashboard:after{border-color:#ffc85755;box-shadow:0 0 90px #ff6b6b22}
+.hero-dashboard h1 span{color:#ffc857}
+.dashboard-formula{-webkit-text-stroke:1px #f8d9ff80}
+input,select,textarea{background:#fff9f1;color:#30243d;border-color:#bca8cc}
+input:focus,select:focus,textarea:focus{border-color:#a78bfa;box-shadow:0 0 0 3px #a78bfa30}
+.btn{background:#49365f;border-color:#80639a;color:#fffaf4}
+.btn.primary{background:#ffc857;color:#382744;border-color:#ffc857}
+.btn.green{background:#55c9a5;color:#173b35;border-color:#55c9a5}
+.btn.orange{background:#ff8a70;color:#3f2026;border-color:#ff8a70}
+.formula-box{border-left-color:#ff6b6b;background:#fff8ed;color:#30243d}
+.tablewrap th{color:#c4a7ff}
+.metric b,.rubric b{color:#ffc857}
+.step{border-left-color:#a78bfa}.step strong{color:#65d6b0}
+.option.selected{border-color:#ffc857;background:#ffc85720}
+.option.correct{border-color:#55c9a5;background:#55c9a51c}
+.option.wrong{border-color:#ff8a70;background:#ff8a7018}
+.login-overlay{background:rgba(20,13,30,.86)}
+.login-card{background:linear-gradient(145deg,#67459a,#30243e);border-color:#ffc85777}
+.login-icon{background:#ffc857;color:#382744}
+.welcome-overlay{background:#211b2e}
+.welcome-panel{border-color:#ffc85777;background:#30243e}
+.welcome-shade{background:linear-gradient(90deg,rgba(34,26,47,.94),rgba(50,36,65,.67) 43%,rgba(50,36,65,.12) 82%),linear-gradient(0deg,rgba(28,20,39,.62),transparent 52%)}
+.welcome-content h1 span{color:#ffc857}
+.toast{border-color:#ff6b6b}
+.ar-stage{background:radial-gradient(circle at 50% 40%,#67459a,#211b2e 74%)}
+.ar-placeholder b{color:#ffc857}
+.mission-item.done{border-color:#55c9a5;background:#55c9a51b}
+.badge{background:#ffc85720;border-color:#ffc85777;color:#ffd778}
+input[type=range]{accent-color:#55c9a5}
+::selection{background:#a78bfa;color:#211b2e}
+:focus-visible{outline:3px solid #ffc857;outline-offset:3px}
+@media(max-width:700px){
+ .welcome-shade{background:linear-gradient(0deg,rgba(34,26,47,.97),rgba(50,36,65,.70) 48%,rgba(50,36,65,.12))}
+}
