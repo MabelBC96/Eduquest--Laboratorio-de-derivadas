@@ -33,7 +33,7 @@ function startAR(){
  const scene=stage.querySelector('a-scene');
  $('arStatus').textContent='Cargando experiencia… acepta el permiso de cámara si el navegador lo solicita.';
  const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
- Promise.resolve().then(async()=>{if(!window.AFRAME)await load('https://aframe.io/releases/1.5.0/aframe.min.js');if(!window.THREEx)await load('https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/three.js/build/ar-threex.js');if(!window.THREEx)throw Error('No fue posible cargar AR.js.');await new Promise(resolve=>scene.addEventListener('loaded',resolve,{once:true}));arStarted=true;$('arStatus').textContent='AR activa. Enfoca el marcador Hiro con la cámara.'}).catch(err=>{$('arStatus').textContent='No se pudo iniciar AR: '+err.message+'. Comprueba HTTPS, permisos y conexión.';});
+ Promise.resolve().then(async()=>{if(!window.AFRAME)await load('https://aframe.io/releases/1.5.0/aframe.min.js');if(!window.THREEx)await load('https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js');if(!window.THREEx)throw Error('No fue posible cargar AR.js.');await new Promise(resolve=>scene.addEventListener('loaded',resolve,{once:true}));arStarted=true;$('arStatus').textContent='AR activa. Enfoca el marcador Hiro con la cámara.'}).catch(err=>{$('arStatus').textContent='No se pudo iniciar AR: '+err.message+'. Comprueba HTTPS, permisos y conexión.';});
 }
 function stopAR(){
  const scene=$('arStage').querySelector('a-scene');
