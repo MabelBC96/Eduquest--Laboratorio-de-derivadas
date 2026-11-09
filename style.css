@@ -183,3 +183,64 @@ input[type=range]{accent-color:#7652b8}
  .welcome-content h1{color:#392b49}
  .welcome-content p{color:#655b70}
 }
+
+
+/* Eduquest Visual: aprendizaje con iconos, ilustraciones y menos bloques de texto */
+:root{--visual-ink:#493363;--visual-purple:#8b5cf6;--visual-coral:#e95d68;--visual-mint:#55b99a;--visual-mango:#ffc857}
+.section-heading{margin-bottom:22px}
+.section-heading>p{max-width:620px;font-size:.92rem}
+.journey-grid .journey{position:relative;min-height:190px;padding:22px 18px 18px 108px;overflow:hidden}
+.journey-grid .journey:before{position:absolute;left:18px;top:26px;width:72px;height:72px;border-radius:22px;display:grid;place-items:center;font-size:2.5rem;background:#f4edff}
+.journey-grid .journey:nth-child(1):before{content:"🧠";background:#f4edff}
+.journey-grid .journey:nth-child(2):before{content:"✏️";background:#fff0eb}
+.journey-grid .journey:nth-child(3):before{content:"📈";background:#eaf8f2}
+.journey-grid .journey:nth-child(4):before{content:"🎓";background:#fff6dd}
+.journey-grid .journey p{font-size:.86rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.topic-card{position:relative;padding:22px 20px 20px 94px;min-height:175px;overflow:hidden}
+.topic-card:before{position:absolute;left:18px;top:24px;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:2rem;background:#f4edff}
+.topic-card:nth-child(1):before{content:"💡";background:#fff6dd}
+.topic-card:nth-child(2):before{content:"🧩";background:#f4edff}
+.topic-card:nth-child(3):before{content:"🌊";background:#eaf8f2}
+.topic-card:nth-child(4):before{content:"🔗";background:#fff0eb}
+.topic-card:nth-child(5):before{content:"🎯";background:#fff6dd}
+.topic-card:nth-child(6):before{content:"🏔️";background:#eaf8f2}
+.topic-card:nth-child(7):before{content:"〰️";background:#f4edff}
+.topic-card:nth-child(8):before{content:"📊";background:#fff0eb}
+.topic-card .topic-number{display:inline-block;font-size:.7rem;letter-spacing:.12em;margin-bottom:6px}
+.topic-card h3{font-size:1.05rem;margin-bottom:7px}
+.topic-card p{font-size:.84rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:5px 0 10px}
+.topic-card .formula-box{font-size:.84rem;padding:9px 10px;margin-top:8px}
+#contenidos .grid3{align-items:stretch}
+#reglas .grid>.card{position:relative;padding-top:58px}
+#reglas .grid>.card:before{position:absolute;top:15px;left:18px;font-size:1.65rem}
+#reglas .grid>.card:nth-child(1):before{content:"🔹"}
+#reglas .grid>.card:nth-child(2):before{content:"⚡"}
+#reglas .grid>.card:nth-child(3):before{content:"✖️"}
+#reglas .grid>.card:nth-child(4):before{content:"➗"}
+#reglas .grid>.card:nth-child(5):before{content:"🌊"}
+#reglas .grid>.card:nth-child(6):before{content:"🔗"}
+.hero-dashboard{min-height:320px;padding:clamp(22px,4vw,42px)}
+.hero-dashboard .subtitle{max-width:570px;font-size:1rem;line-height:1.45}
+.dashboard-formula{font-size:clamp(2.6rem,7vw,6.2rem);padding:20px;border-radius:28px;background:#ffffff9c;color:#7652b8;-webkit-text-stroke:0;box-shadow:inset 0 0 0 1px #e8d9f2}
+.metric{border-radius:16px;box-shadow:0 5px 18px #4933630a}
+.metric b{font-size:1.45rem}
+.practice-card{background:linear-gradient(135deg,#fff,#f7f1ff)}
+.practice-card #exerciseQuestion{font-size:clamp(1.2rem,2.5vw,1.7rem);line-height:1.35}
+.option{min-height:66px;border-radius:15px;font-size:1.08rem;font-weight:700;box-shadow:0 4px 12px #4933630a}
+.option:before{content:"◯";color:#9a78cb;margin-right:10px}
+.option.selected:before{content:"◉"}
+.mission-item{min-height:88px;border-radius:16px}
+.mission-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:16px;background:#f4edff;font-size:1.8rem;flex-shrink:0}
+.badge{font-size:.88rem}
+#plot,#tanPlot{background:#fff;border:1px solid #eadff0;border-radius:18px}
+.graph-card{padding:8px}
+.formula-box{border-radius:12px;line-height:1.65}
+.card h3{letter-spacing:-.015em}
+@media(max-width:700px){
+ .journey-grid .journey{min-height:135px;padding:18px 14px 16px 88px}
+ .journey-grid .journey:before{left:14px;top:22px;width:60px;height:60px;font-size:2rem}
+ .topic-card{padding:18px 14px 18px 82px;min-height:150px}
+ .topic-card:before{left:13px;top:20px;width:54px;height:54px;font-size:1.8rem}
+ .dashboard-formula{display:inline-block;margin-top:12px;padding:12px 18px}
+ .topic-card p{-webkit-line-clamp:2}
+}
