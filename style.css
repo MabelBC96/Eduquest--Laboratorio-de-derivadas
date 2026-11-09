@@ -13,3 +13,17 @@ section{display:none;max-width:1250px;margin:auto}section.active{display:block}.
 @media(max-width:1100px){aside{width:235px}main{margin-left:235px;width:calc(100% - 235px)}.grid3{grid-template-columns:repeat(2,1fr)}.controls{grid-template-columns:repeat(2,1fr)}.dashboard-formula{font-size:4rem}}
 @media(max-width:700px){aside{transform:translateX(-100%);transition:.25s;width:min(88vw,330px)}aside.open{transform:translateX(0)}main{margin-left:0;width:100%;padding:10px}.hamb{display:inline-block}.desktop-nav{display:block}.selectmenu{display:none}.topbar{padding:8px}.grid,.grid3{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.card{padding:14px;border-radius:14px}.hero-dashboard{min-height:420px;display:block}.dashboard-formula{margin-top:25px;font-size:4rem}.options{grid-template-columns:1fr}#plot,#tanPlot{height:390px}.welcome-panel{width:94vw;height:88vh;min-height:540px;border-radius:20px}.welcome-image{object-position:60% center}.welcome-shade{background:linear-gradient(0deg,rgba(7,27,74,.97),rgba(7,27,74,.65) 48%,rgba(7,27,74,.12))}.welcome-content{left:7%;top:auto;bottom:7%;transform:none;width:86%}.welcome-content h1{font-size:2.8rem}.welcome-content p{font-size:.95rem}.welcome-button{width:100%}.login-card{padding:20px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Eduquest Plus: exploración, AR y gamificación */
+.ar-stage{position:relative;min-height:330px;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:radial-gradient(circle at 50% 40%,#1c5796,#071b4a 72%);display:grid;place-items:center}
+.ar-stage a-scene{width:100%;height:420px;display:block}
+.ar-placeholder{display:grid;gap:10px;text-align:center;padding:35px;color:var(--muted)}
+.ar-placeholder b{font-size:1.3rem;color:var(--gold)}
+.mission-list{display:grid;gap:12px}
+.mission-item{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:13px;background:#ffffff08}
+.mission-icon{font-size:1.7rem}.mission-item p{margin:3px 0;color:var(--muted);font-size:.9rem}.mission-item strong{color:var(--cream)}
+.mission-item.done{border-color:var(--turq);background:#28d4c114}
+.badge-shelf{display:flex;gap:10px;flex-wrap:wrap}
+.badge{padding:10px 14px;border-radius:999px;background:#ffd45a18;border:1px solid #ffd45a66;color:var(--gold);font-weight:800}
+input[type=range]{padding:0;min-height:28px;accent-color:var(--turq)}
+@media(max-width:700px){.ar-stage{min-height:280px}.ar-stage a-scene{height:340px}}
